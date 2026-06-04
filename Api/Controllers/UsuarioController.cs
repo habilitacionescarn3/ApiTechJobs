@@ -1,6 +1,8 @@
-﻿using Api.Helper;
+﻿using Api.Configuration;
+using Api.Helper;
 using Azure.Core;
 using Microsoft.AspNetCore.Mvc;
+using Model.Enum;
 using Model.Request;
 using Model.Response;
 using Services.Interfaces;
@@ -54,6 +56,7 @@ namespace Api.Controllers
             }
         }
 
+        [AutorizarPerfis(EnumPerfil.Empresa, EnumPerfil.Candidato)]
         [HttpPut("foto-perfil")]
         public async Task<IActionResult> EditarFotoPerfil(IFormFile file)
         {
@@ -69,6 +72,7 @@ namespace Api.Controllers
             }
         }
 
+        [AutorizarPerfis(EnumPerfil.Empresa, EnumPerfil.Candidato)]
         [HttpGet("foto-perfil")]
         public async Task<IActionResult> ObterFotoPerfil()
         {

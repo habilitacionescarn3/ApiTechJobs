@@ -100,7 +100,7 @@ public class UsuarioService(IOptions<JwtSettings> jwt, UsuarioRepository usuario
     {
         var usuario = _usuarioRepository.ObterPorId(idUsuario);
 
-        if (!string.IsNullOrWhiteSpace(usuario?.ChaveFotoPerfil))
+        if (string.IsNullOrWhiteSpace(usuario?.ChaveFotoPerfil))
             return null;
 
         return await awsService.PreSignedURL(usuario.ChaveFotoPerfil);
