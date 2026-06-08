@@ -3,6 +3,7 @@ using Api.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Model;
 using Model.Enum;
 using Model.Request;
 using Services.Interfaces;
@@ -89,6 +90,22 @@ namespace Api.Controllers
             var vaga = _vagaService.ObterVagaEmpresaPorId(id);
 
             return Ok(vaga);
+        }
+
+        /// <summary>
+        /// Edita uma vaga
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="vaga"></param>
+        /// <returns></returns>
+        [VagaActionFilter]
+        [HttpPut("{id}")]
+        [AutorizarPerfis(EnumPerfil.Empresa)]
+        public IActionResult EditarVaga([FromRoute] int id, [FromBody] Vaga vaga)
+        {
+            _vagaService.Editar(id, vaga);
+
+            return NoContent();
         }
 
         /// <summary>

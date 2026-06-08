@@ -32,7 +32,10 @@ public class EmpresaService(EmpresaRepository empresaRepository, VagaRepository 
             NivelExperiencia = novaVaga.NivelExperiencia,
             Nome = novaVaga.Nome,
             Numero = novaVaga.Numero,
-            SalarioPrevisto = novaVaga.SalarioPrevisto
+            SalarioPrevisto = novaVaga.SalarioPrevisto,
+            Tecnologias = novaVaga.Tecnologias,
+            Requisitos = novaVaga.Requisitos,
+            Beneficios = novaVaga.Beneficios
         };
 
         return vagaRepository.Adicionar(vaga);

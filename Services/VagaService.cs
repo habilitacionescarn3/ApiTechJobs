@@ -20,6 +20,18 @@ public class VagaService(VagaRepository vagaRepository, CandidatoVagaRepository 
 
     public void Excluir(int id) => vagaRepository.Excluir(id);
 
+    public void Editar(int id, Vaga vaga)
+    {
+        var vagaAtual = vagaRepository.ObterModelPorId(id);
+
+        if (vagaAtual == null)
+            return;
+
+        vagaAtual.AtualizarModel(vaga);
+
+        vagaRepository.Editar(vagaAtual);
+    }
+
     public IList<VagaCandidatoResponse> ObterTodas(ObterTodasVagasRequest request) => vagaRepository.ObterTodos(request);
 
     public bool ValidarVagaEmpresa(int idVaga, int idUsuarioEmpresa) => vagaRepository.ObterVagaPorIdUsuarioEmpresa(idVaga, idUsuarioEmpresa) != null;

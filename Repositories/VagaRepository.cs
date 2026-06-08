@@ -14,6 +14,38 @@ namespace Repositories;
 
 public class VagaRepository(IConfiguration configuration) : GenericRepository<Vaga>(configuration)
 {
+    public Vaga? ObterModelPorId(int id)
+    {
+        using var conexao = CriarConexao();
+
+        const string sqlCommand = "SELECT * FROM Vaga WHERE Id = @id";
+
+        return conexao.QuerySingleOrDefault<Vaga>(sqlCommand, new { id });
+    }
+
+    public override void Editar(Vaga vaga)
+    {
+        using var conexao = CriarConexao();
+
+        const string sqlCommand = @"UPDATE Vaga
+                                    SET Nome = @Nome,
+                                        Cargo = @Cargo,
+                                        Modelo = @Modelo,
+                                        NivelExperiencia = @NivelExperiencia,
+                                        Cep = @Cep,
+                                        Numero = @Numero,
+                                        Descricao = @Descricao,
+                                        SalarioPrevisto = @SalarioPrevisto,
+                                        Interna = @Interna,
+                                        DataFimInscricoes = @DataFimInscricoes,
+                                        Tecnologias = @Tecnologias,
+                                        Requisitos = @Requisitos,
+                                        Beneficios = @Beneficios
+                                    WHERE Id = @Id";
+
+        conexao.Execute(sqlCommand, vaga);
+    }
+
     public override VagaCandidatoResponse? ObterPorId(int id)
     {
         using var conexao = CriarConexao();
