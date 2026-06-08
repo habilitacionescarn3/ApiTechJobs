@@ -6,6 +6,8 @@
     Situacao INT NOT NULL,
     FileKey VARCHAR(500) NULL,
 
+    [DataCadastro] DATETIME NULL, 
+    [DataAtualizacao] DATETIME NULL, 
     CONSTRAINT FK_CandidatoVaga_Candidato
         FOREIGN KEY (IdCandidato)
         REFERENCES Candidato(Id),

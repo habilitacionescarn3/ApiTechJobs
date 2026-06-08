@@ -40,7 +40,6 @@ namespace Api.Controllers
         {
             var vagas = _empresaService.ObterVagas(User.ObterId());
 
-           
             return Ok(vagas);
         }
         /// <summary>

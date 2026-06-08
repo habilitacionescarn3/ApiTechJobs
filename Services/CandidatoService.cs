@@ -9,6 +9,7 @@ using Model.Response;
 using Repositories;
 using Services.Interfaces;
 using Services.Utils.Interface;
+using Utils;
 
 namespace Services;
 
@@ -31,11 +32,14 @@ public class CandidatoService(CandidatoRepository candidatoRepository, Informaca
             FileKey = fileKey,
             IdCandidato = candidato.Id,
             IdVaga = aplicarVaga.IdVaga,
-            Situacao = EnumSituacao.EmAnalise
+            Situacao = EnumSituacao.EmAnalise,
+            DataAtualizacao = HorarioBrasilia.DataAtual,
+           DataCadastro = HorarioBrasilia.DataAtual 
         });
     }
 
     public IList<AplicacaoCandidatoResponse> ObterAplicacoes(int idUsuario) => candidatoVagaRepository.ObterAplicacoesPorCandidato(idUsuario);
+    public AplicacaoCandidatoResponse? ObterVaga(int idVaga, int idUsuario) => candidatoVagaRepository.ObterVaga(idVaga, idUsuario);
 
     public InformacoesCandidatoResponse ObterInformacoesPorUsuario(int idUsuario)
     {

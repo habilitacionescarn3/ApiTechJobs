@@ -38,6 +38,14 @@ namespace Api.Controllers
             return Ok(aplicacoes);
         }
 
+        [HttpGet("vaga/{id}")]
+        public IActionResult ObterAplicacao(int id)
+        {
+            var aplicacoes = _candidatoService.ObterVaga(id, User.ObterId());
+
+            return Ok(aplicacoes);
+        }
+
         [HttpGet("informacoes")]
         public IActionResult ObterInformacoesPorUsuario()
         {

@@ -4,10 +4,12 @@ using Model.Request;
 using Model.Response;
 using Repositories;
 using Services.Interfaces;
+using Services.Utils.Interface;
+using Utils;
 
 namespace Services;
 
-public class EmpresaService(EmpresaRepository empresaRepository, VagaRepository vagaRepository, CandidatoVagaRepository candidatoVagaRepository, InformacaoEmpresaRepository informacaoEmpresaRepository) : IEmpresaService
+public class EmpresaService(EmpresaRepository empresaRepository, VagaRepository vagaRepository, CandidatoVagaRepository candidatoVagaRepository, InformacaoEmpresaRepository informacaoEmpresaRepository, IAwsService awsService) : IEmpresaService
 {
     public int Adicionar(Empresa empresa) => empresaRepository.Adicionar(empresa);
 
@@ -42,6 +44,7 @@ public class EmpresaService(EmpresaRepository empresaRepository, VagaRepository 
     {
         Id = idAplicacao,
         Situacao = situacao,
+        DataAtualizacao = HorarioBrasilia.DataAtual
     });
 
     public InformacoesEmpresaResponse ObterInformacoesPorUsuario(int idUsuario)
@@ -76,5 +79,15 @@ public class EmpresaService(EmpresaRepository empresaRepository, VagaRepository 
                 Tecnologias = request.Tecnologias,
             });
         }
+    }
+
+    public async Task<string?> GerarUrlAssinadaFotoPerfil(int idEmpresa)
+    {
+        var fileKey = empresaRepository.ObterChaveFotoPerfilEmpresa(idEmpresa);
+
+        if (string.IsNullOrWhiteSpace(fileKey))
+            return null;
+
+        return await awsService.PreSignedURL(fileKey);
     }
 }

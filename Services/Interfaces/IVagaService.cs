@@ -11,7 +11,7 @@ namespace Services.Interfaces;
 
 public interface IVagaService
 {
-    Vaga? ObterVaga(int id);
+    VagaCandidatoResponse? ObterVaga(int id);
     void Excluir(int id);
     IList<VagaCandidatoResponse> ObterTodas(ObterTodasVagasRequest request);
     bool ValidarVagaEmpresa(int idVaga, int idUsuarioEmpresa);

@@ -14,6 +14,9 @@
     DataCadastro DATETIME NOT NULL DEFAULT GETDATE(),
     DataFimInscricoes DATETIME NOT NULL,
 
+    [Tecnologias] VARCHAR(2000) NULL, 
+    [Requisitos] VARCHAR(2000) NULL, 
+    [Beneficios] VARCHAR(2000) NULL, 
     CONSTRAINT FK_Vaga_Empresa
         FOREIGN KEY (IdEmpresa)
         REFERENCES Empresa(Id)

@@ -12,4 +12,6 @@ public class CandidatoVaga
     public int IdVaga { get; set; }
     public EnumSituacao Situacao { get; set; }
     public string? FileKey { get; set; }
+    public DateTime DataCadastro { get; set; }
+    public DateTime DataAtualizacao { get; set; }
 }

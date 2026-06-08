@@ -4,5 +4,6 @@ public enum EnumSituacao
 {
     EmAnalise = 1,
     Aprovado = 2,
-    Reprovado = 3
+    Entrevista = 3,
+    Reprovado = 4
 }

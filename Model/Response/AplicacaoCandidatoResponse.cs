@@ -10,4 +10,5 @@ namespace Model.Response;
 public class AplicacaoCandidatoResponse : VagaCandidatoResponse
 {
     public EnumSituacao Situacao { get; set; }
+    public DateTime DataAtualizacaoAplicacao { get; set; }
 }

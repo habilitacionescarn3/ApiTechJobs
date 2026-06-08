@@ -14,6 +14,18 @@ namespace Repositories;
 
 public class VagaRepository(IConfiguration configuration) : GenericRepository<Vaga>(configuration)
 {
+    public override VagaCandidatoResponse? ObterPorId(int id)
+    {
+        using var conexao = CriarConexao();
+
+        const string sqlCommand = @"SELECT V.*, E.Nome AS NomeEmpresa
+                                    FROM Vaga AS V
+                                    LEFT JOIN Empresa AS E
+                                    ON E.Id = V.IdEmpresa
+                                    WHERE V.Id = @id";
+
+        return conexao.QuerySingleOrDefault<VagaCandidatoResponse>(sqlCommand, new {  id });
+    }
     public IList<VagaResponse> ObterVagasPorIdUsuarioEmpresa(int idUsuarioEmpresa)
     {
         using var conexao = CriarConexao();
@@ -50,6 +62,8 @@ public class VagaRepository(IConfiguration configuration) : GenericRepository<Va
                                                 OR NivelExperiencia LIKE '%' + @TermoBusca + '%'
                                                 OR Modelo LIKE '%' + @TermoBusca + '%'
                                                 OR V.Cep LIKE '%' + @TermoBusca + '%'
+                                                OR V.Nome LIKE '%' + @TermoBusca + '%'
+                                                OR E.Nome LIKE '%' + @TermoBusca + '%'
                                             )
                                         )
                                         AND (

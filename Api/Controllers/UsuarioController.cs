@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Model.Enum;
 using Model.Request;
 using Model.Response;
+using Services;
 using Services.Interfaces;
 using Utils;
 
@@ -13,10 +14,8 @@ namespace Api.Controllers
     [Route("usuario")]
     [ApiController]
     [ProducesErrorResponseType(typeof(ErroResponse))]
-    public class UsuarioController(IUsuarioService usuarioService) : ControllerBase
+    public class UsuarioController(IUsuarioService usuarioService, IEmpresaService empresaService) : ControllerBase
     {
-        private readonly IUsuarioService _usuarioService = usuarioService;
-
         /// <summary>
         /// Cria um novo usuário
         /// </summary>
@@ -27,7 +26,7 @@ namespace Api.Controllers
         {
             try
             {
-                _usuarioService.NovoUsuario(request);
+                usuarioService.NovoUsuario(request);
 
                 return NoContent();
             }
@@ -47,7 +46,7 @@ namespace Api.Controllers
         {
             try
             {
-                var token = _usuarioService.LogarUsuario(request);
+                var token = usuarioService.LogarUsuario(request);
                 return Ok(token);
             }
             catch (Exception ex)
@@ -62,7 +61,7 @@ namespace Api.Controllers
         {
             try
             {
-                await _usuarioService.EditarFotoPerfil(User.ObterId(), file);
+                await usuarioService.EditarFotoPerfil(User.ObterId(), file);
 
                 return NoContent();
             }
@@ -78,7 +77,7 @@ namespace Api.Controllers
         {
             try
             {
-                await _usuarioService.DeletarFotoPerfil(User.ObterId());
+                await usuarioService.DeletarFotoPerfil(User.ObterId());
 
                 return NoContent();
             }
@@ -94,7 +93,25 @@ namespace Api.Controllers
         {
             try
             {
-                var url = await _usuarioService.GerarUrlAssinadaFotoPerfil(User.ObterId());
+                var url = await usuarioService.GerarUrlAssinadaFotoPerfil(User.ObterId());
+
+                return Ok(url);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.GerarRespostaErro());
+            }
+        }
+
+
+
+        [AutorizarPerfis(EnumPerfil.Candidato)]
+        [HttpGet("foto-perfil/empresa/{idEmpresa}")]
+        public async Task<IActionResult> ObterFotoPerfilEmpresa(int idEmpresa)
+        {
+            try
+            {
+                var url = await empresaService.GerarUrlAssinadaFotoPerfil(idEmpresa);
 
                 return Ok(url);
             }

@@ -19,4 +19,5 @@ public interface IEmpresaService
     void RetornarResultado(int idAplicacao, EnumSituacao situacao);
     InformacoesEmpresaResponse ObterInformacoesPorUsuario(int idUsuario);
     void AtualizarInformacoesEmpresa(int idusuario, AtualizarInformacoesEmpresaRequest request);
+    Task<string?> GerarUrlAssinadaFotoPerfil(int idEmpresa);
 }

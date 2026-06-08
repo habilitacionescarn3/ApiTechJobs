@@ -15,6 +15,7 @@ public interface ICandidatoService
     void Adicionar(Candidato candidato);
     Task AplicarVaga(AplicarVagaRequest aplicarVaga);
     IList<AplicacaoCandidatoResponse> ObterAplicacoes(int idUsuario);
+    AplicacaoCandidatoResponse? ObterVaga(int id, int idUsuario);
     InformacoesCandidatoResponse ObterInformacoesPorUsuario(int idUsuario);
     void AtualizarInformacoesCandidato(int idUsuario, AtualizarInformacoesCandidatoRequest request);
 }

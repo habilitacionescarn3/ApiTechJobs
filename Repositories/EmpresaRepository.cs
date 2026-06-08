@@ -29,4 +29,16 @@ public class EmpresaRepository(IConfiguration configuration) : GenericRepository
 
         return conexao.QuerySingleOrDefault<Empresa>(sqlCommand, new { documento });
     }
+
+    public string? ObterChaveFotoPerfilEmpresa(int idEmpresa)
+    {
+        using var conexao = CriarConexao();
+
+        const string sqlCommand = @"SELECT ChaveFotoPerfil FROM Usuario AS U
+                                    JOIN Empresa AS E
+                                    ON E.IdUsuario = U.Id
+                                    WHERE E.Id = @idEmpresa";
+
+        return conexao.QuerySingleOrDefault<string>(sqlCommand, new { idEmpresa });
+    }
 }
