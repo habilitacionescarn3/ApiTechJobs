@@ -18,13 +18,13 @@ using Utils;
 
 namespace Services;
 
-public class UsuarioService(IOptions<JwtSettings> jwt, IOptions<EmailValidationSettings> emailValidationSettings, UsuarioRepository usuarioRespository,
+public class UsuarioService(IOptions<JwtSettings> jwt, IOptions<FrontEndSettings> frontEndSettings, UsuarioRepository usuarioRespository,
     ICandidatoService candidatoService, IEmpresaService empresaService, CandidatoRepository candidatoRepository,
     NotificacaoUsuarioRepository notificacaoUsuarioRepository, ValidacaoEmailRepository validacaoEmailRepository,
-    IAwsService awsService) : IUsuarioService
+    RecuperacaoSenhaRepository recuperacaoSenhaRepository, IAwsService awsService) : IUsuarioService
 {
     private readonly JwtSettings _jwt = jwt.Value;
-    private readonly EmailValidationSettings _emailValidationSettings = emailValidationSettings.Value;
+    private readonly FrontEndSettings _frontEndSettings = frontEndSettings.Value;
     private readonly UsuarioRepository _usuarioRepository = usuarioRespository;
     private readonly ICandidatoService _candidatoService = candidatoService;
     private readonly IEmpresaService _empresaService = empresaService;
@@ -76,6 +76,12 @@ public class UsuarioService(IOptions<JwtSettings> jwt, IOptions<EmailValidationS
                 _empresaService.Adicionar(empresa);
                 break;
         }
+
+        await awsService.SendEmailTemplate(novoUsuario.Login, "TechJobs_BoasVindas", new
+        {
+            nome = novoUsuario.Nome,
+            loginLink = _frontEndSettings.BaseUrl
+        });
     }
 
     public LogarUsuarioResponse LogarUsuario(LogarUsuarioRequest logarUsuario)
@@ -117,6 +123,65 @@ public class UsuarioService(IOptions<JwtSettings> jwt, IOptions<EmailValidationS
 
         if (!validacaoEmailRepository.Validar(tokenHash, validacaoEmail.IdUsuario, dataValidacao))
             throw new Exception("Código de validação inválido.");
+    }
+
+    public async Task SolicitarRecuperacaoSenha(RecuperarSenhaRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Login))
+            return;
+
+        var usuario = _usuarioRepository.ObterCredenciaisUsuario(request.Login);
+
+        if (usuario == null)
+            return;
+
+        if (string.IsNullOrWhiteSpace(_frontEndSettings.BaseUrl))
+            throw new Exception("URL de recuperação de senha não configurada.");
+
+        var codigo = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
+        var dataCriacao = DateTime.UtcNow;
+
+        recuperacaoSenhaRepository.Adicionar(new RecuperacaoSenha
+        {
+            IdUsuario = usuario.Id,
+            TokenHash = GerarTokenHash(codigo),
+            DataCriacao = dataCriacao,
+            DataExpiracao = dataCriacao.AddHours(1)
+        });
+
+        var resetPasswordLink = $"{_frontEndSettings.BaseUrl}/redefinir-senha?codigo={Uri.EscapeDataString(codigo)}";
+
+        await awsService.SendEmailTemplate(usuario.Email, "TechJobs_RecuperacaoSenha", new
+        {
+            nome = usuario.Nome,
+            resetPasswordLink
+        });
+    }
+
+    public void RedefinirSenha(RedefinirSenhaRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Codigo))
+            throw new Exception("Código de recuperação de senha inválido.");
+
+        if (string.IsNullOrWhiteSpace(request.NovaSenha))
+            throw new Exception("A nova senha deve ser informada.");
+
+        var tokenHash = GerarTokenHash(request.Codigo);
+        var recuperacaoSenha = recuperacaoSenhaRepository.ObterPorTokenHash(tokenHash)
+            ?? throw new Exception("Código de recuperação de senha inválido.");
+
+        if (recuperacaoSenha.DataUtilizacao.HasValue)
+            throw new Exception("Este código de recuperação de senha já foi utilizado.");
+
+        var dataUtilizacao = DateTime.UtcNow;
+
+        if (recuperacaoSenha.DataExpiracao < dataUtilizacao)
+            throw new Exception("Código de recuperação de senha expirado.");
+
+        var senha = request.NovaSenha.CriptografarSenha();
+
+        if (!recuperacaoSenhaRepository.RedefinirSenha(tokenHash, recuperacaoSenha.IdUsuario, senha, dataUtilizacao))
+            throw new Exception("Código de recuperação de senha inválido.");
     }
 
     public async Task EditarFotoPerfil(int idUsuario, IFormFile file)
@@ -206,7 +271,7 @@ public class UsuarioService(IOptions<JwtSettings> jwt, IOptions<EmailValidationS
 
     private async Task EnviarValidacaoEmail(int idUsuario, string email, string nome)
     {
-        if (string.IsNullOrWhiteSpace(_emailValidationSettings.VerificationUrl))
+        if (string.IsNullOrWhiteSpace(_frontEndSettings.BaseUrl))
             throw new Exception("URL de validação de e-mail não configurada.");
 
         var codigo = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
@@ -220,7 +285,7 @@ public class UsuarioService(IOptions<JwtSettings> jwt, IOptions<EmailValidationS
             DataExpiracao = dataCriacao.AddHours(24)
         });
 
-        var verificationLink = $"{_emailValidationSettings.VerificationUrl}?codigo={Uri.EscapeDataString(codigo)}";
+        var verificationLink = $"{_frontEndSettings.BaseUrl}/validacao-email?codigo={Uri.EscapeDataString(codigo)}";
 
         await awsService.SendEmailTemplate(email, "TechJobs_ValidacaoEmail", new
         {

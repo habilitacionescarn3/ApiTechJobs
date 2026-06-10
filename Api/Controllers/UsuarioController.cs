@@ -166,6 +166,42 @@ namespace Api.Controllers
             return Ok(emailValidado);
         }
 
+        /// <summary>
+        /// Envia um link de recuperação de senha, caso o login informado esteja cadastrado
+        /// </summary>
+        [HttpPost("senha/recuperacao")]
+        public async Task<IActionResult> SolicitarRecuperacaoSenha([FromBody] RecuperarSenhaRequest request)
+        {
+            try
+            {
+                await usuarioService.SolicitarRecuperacaoSenha(request);
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.GerarRespostaErro());
+            }
+        }
+
+        /// <summary>
+        /// Redefine a senha utilizando o código enviado por e-mail
+        /// </summary>
+        [HttpPost("senha/redefinir")]
+        public IActionResult RedefinirSenha([FromBody] RedefinirSenhaRequest request)
+        {
+            try
+            {
+                usuarioService.RedefinirSenha(request);
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.GerarRespostaErro());
+            }
+        }
+
         [AutorizarPerfis(EnumPerfil.Empresa)]
         [HttpGet("foto-perfil/candidato/{idCandidato}")]
         public async Task<IActionResult> ObterFotoPerfilCandidato(int idCandidato)

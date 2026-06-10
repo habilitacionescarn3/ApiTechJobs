@@ -69,5 +69,6 @@
     <Build Include="InformacaoEmpresa.sql" />
     <Build Include="NotificacaoUsuario.sql" />
     <Build Include="ValidacaoEmail.sql" />
+    <Build Include="RecuperacaoSenha.sql" />
   </ItemGroup>
 </Project>

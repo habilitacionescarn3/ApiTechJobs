@@ -24,11 +24,14 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.ConfigurarServicos();
-builder.Services.Configure<EmailValidationSettings>(
-    builder.Configuration.GetSection(nameof(EmailValidationSettings)));
+
+var frontEndSettingsSection = builder.Configuration.GetSection(nameof(FrontEndSettings));
+builder.Services.Configure<FrontEndSettings>(frontEndSettingsSection);
+
 builder.RegistrarAutenticaco();
 
 builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+builder.Configuration.AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: true);
 
 var app = builder.Build();
 

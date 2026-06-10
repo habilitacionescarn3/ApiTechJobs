@@ -11,6 +11,8 @@ public interface IUsuarioService
     LogarUsuarioResponse LogarUsuario(LogarUsuarioRequest logarUsuario);
     Task GerarValidacaoEmail(int idUsuario);
     void ValidarEmail(string codigo);
+    Task SolicitarRecuperacaoSenha(RecuperarSenhaRequest request);
+    void RedefinirSenha(RedefinirSenhaRequest request);
     Task EditarFotoPerfil(int idUsuario, IFormFile file);
     Task DeletarFotoPerfil(int idUsuario);
     Task<string?> GerarUrlAssinadaFotoPerfil(int idUsuario);
