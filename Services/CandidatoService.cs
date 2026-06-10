@@ -105,7 +105,7 @@ public class CandidatoService(CandidatoRepository candidatoRepository, Informaca
 
         if (request.Experiencias?.Count > 0)
         {
-            experienciaCandidatoRepository.Excluir(idUsuario);
+            experienciaCandidatoRepository.Excluir(candidato.Id);
 
             foreach (var exp in request.Experiencias)
             {
