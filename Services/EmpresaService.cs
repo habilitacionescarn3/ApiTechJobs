@@ -11,7 +11,7 @@ using Utils;
 
 namespace Services;
 
-public class EmpresaService(EmpresaRepository empresaRepository, VagaRepository vagaRepository, CandidatoRepository candidatoRepository, CandidatoVagaRepository candidatoVagaRepository, InformacaoEmpresaRepository informacaoEmpresaRepository, NotificacaoUsuarioRepository notificacaoUsuarioRepository, InformacaoCandidatoRepository informacaoCandidatoRepository, ExperienciaCandidatoRepository experienciaCandidatoRepository, IAwsService awsService) : IEmpresaService
+public class EmpresaService(EmpresaRepository empresaRepository, VagaRepository vagaRepository, UsuarioRepository usuarioRepository, CandidatoRepository candidatoRepository, CandidatoVagaRepository candidatoVagaRepository, InformacaoEmpresaRepository informacaoEmpresaRepository, NotificacaoUsuarioRepository notificacaoUsuarioRepository, InformacaoCandidatoRepository informacaoCandidatoRepository, ExperienciaCandidatoRepository experienciaCandidatoRepository, IAwsService awsService) : IEmpresaService
 {
     public int Adicionar(Empresa empresa) => empresaRepository.Adicionar(empresa);
 
@@ -111,8 +111,9 @@ public class EmpresaService(EmpresaRepository empresaRepository, VagaRepository 
         var informacoes = informacaoEmpresaRepository.ObterInformacoesPorIdEmpresa(empresa.Id);
         var vagas = vagaRepository.ObterVagasDisponiveisPorIdEmpresa(empresa.Id);
         var dadosVagasEmpresa = candidatoVagaRepository.ObterDadosDashboardEmpresa(empresa.IdUsuario);
+        var usuario = usuarioRepository.ObterPorId(empresa.IdUsuario);
 
-        return new(empresa, informacoes, vagas, dadosVagasEmpresa.Candidatos);
+        return new(empresa, informacoes, vagas, dadosVagasEmpresa.Candidatos, usuario?.EmailValidado);
     }
 
 

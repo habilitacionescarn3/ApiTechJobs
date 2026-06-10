@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Model.Response
 {
-    public class InformacoesEmpresaResponse(Empresa empresa, InformacaoEmpresa? informacaoEmpresa, IList<VagaCandidatoResponse> vagas, int candidatos)
+    public class InformacoesEmpresaResponse(Empresa empresa, InformacaoEmpresa? informacaoEmpresa, IList<VagaCandidatoResponse> vagas, int candidatos, bool? emailValidado = false)
     {
         public int Id { get; set; } = empresa.Id;
         public string Nome { get; set; } = empresa.Nome;
@@ -17,5 +17,6 @@ namespace Model.Response
         public int VagasDisponiveis { get; set; } = vagas.Count;
         public int Candidatos { get; set; } = candidatos;
         public IList<VagaCandidatoResponse> Vagas { get; set; } = vagas;
+        public bool EmailValidado { get; set; } = emailValidado ?? false;
     }
 }

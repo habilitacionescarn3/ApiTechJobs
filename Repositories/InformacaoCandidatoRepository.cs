@@ -17,9 +17,11 @@ namespace Repositories
         {
             using var conexao = CriarConexao();
 
-            const string sqlCommand = @"SELECT C.Nome, IC.* FROM Candidato AS C
+            const string sqlCommand = @"SELECT C.Nome, IC.*, U.EmailValidado FROM Candidato AS C
                                         LEFT JOIN InformacaoCandidato AS IC
                                         ON IC.IdCandidato = C.Id
+                                        LEFT JOIN Usuario AS U
+                                        ON U.Id = C.IdUsuario
                                         WHERE C.Id = @idCandidato";
 
             return conexao.QuerySingleOrDefault<InformacaoCandidatoNomeDTO>(sqlCommand, new { idCandidato });

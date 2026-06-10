@@ -159,9 +159,9 @@ namespace Api.Controllers
 
         [AutorizarPerfis(EnumPerfil.Empresa, EnumPerfil.Candidato)]
         [HttpGet("email/validado")]
-        public IActionResult ObterValidacaoEmail()
+        public IActionResult ObterValidacaoEmail([FromQuery(Name = "idBusca")] int? idUsuario)
         {
-            var emailValidado = usuarioService.ObterValidacaoEmail(User.ObterId());
+            var emailValidado = usuarioService.ObterValidacaoEmail(idUsuario ?? User.ObterId());
 
             return Ok(emailValidado);
         }

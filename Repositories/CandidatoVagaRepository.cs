@@ -19,7 +19,7 @@ public class CandidatoVagaRepository(IConfiguration configuration) : GenericRepo
     {
         using var conexao = CriarConexao();
 
-        const string sqlCommand = @"SELECT CV.Id, CV.DataCadastro, C.Nome, C.Email FROM CandidatoVaga AS CV
+        const string sqlCommand = @"SELECT CV.Id, CV.DataCadastro, CV.Situacao, C.Nome, C.Email FROM CandidatoVaga AS CV
                                     LEFT JOIN Candidato AS C
                                     ON C.Id = CV.IdCandidato
                                     WHERE IdVaga = @idVaga";
